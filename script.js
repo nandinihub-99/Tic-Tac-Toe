@@ -1,63 +1,56 @@
-const cells = document.querySelectorAll(".cell");
-const resetButton = document.getElementById("reset");
+const ball = document.getElementById("ball");
+const basket = document.getElementById("basket");
+const scoreText = document.getElementById("score");
+const startBtn = document.getElementById("startBtn")
 
-let currentPlayer = "X";
-let gameActive = true;
+let score = 0;
+let basketX = 110;
+let ballX = Math.random() * 270;
+let ballY = 0;
 
-const winPatterns = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-];
+// Basket move
+document.addEventListener("keydown", (event) => {
+  if (event.key === "ArrowLeft") {
+    basketX -= 20;
+    if (basketX < 0) basketX = 0;
+  }
 
-function checkWinner() {
-    for (let pattern of winPatterns) {
-        const [a, b, c] = pattern;
+  if (event.key === "ArrowRight") {
+    basketX += 20;
+    if (basketX > 220) basketX = 220;
+  }
 
-        if (
-            cells[a].textContent &&
-            cells[a].textContent === cells[b].textContent &&
-            cells[a].textContent === cells[c].textContent
-        ) {
-            alert("Player " + cells[a].textContent + "Wins !");
-            gameActive = false;
-            return;
-        }
-    }
-
-    let isDraw = true;
-    cells.forEach(cell => {
-        if (cell.textContent === "") isDraw = false;
-    });
-
-    if (isDraw && gameActive) {
-        alert("It's a Draw!");
-        gameActive = false;
-    }
-}
-
-cells.forEach(cell => {
-    cell.addEventListener("click", () => {
-        if (!gameActive) return;
-
-        if (cell.textContent === "") {
-            cell.textContent = currentPlayer;
-            checkWinner();
-
-            if (gameActive) {
-                currentPlayer = currentPlayer === "X" ? "O" : "X";
-            }
-        }
-    });
+  basket.style.left = basketX + "px";
 });
 
-resetButton.addEventListener("click", () => {
-    cells.forEach(cell => cell.textContent = "");
-    currentPlayer = "X";
-    gameActive = true;
+// Ball fall
+function updateGame() {
+  ballY += 5;
+
+  if (ballY >= 470) {
+    if (ballX >= basketX && ballX <= basketX + 80) {
+      score++;
+      scoreText.textContent = score;
+    } else {
+      alert("Game Over!\nScore: " + score);
+      score = 0;
+      scoreText.textContent = score;
+    }
+
+    ballY = 0;
+    ballX = Math.random() * 270;
+  }
+
+  ball.style.top = ballY + "px";
+  ball.style.left = ballX + "px";
+}
+
+let gameInterval;
+
+startBtn.addEventListener("click", () => {
+  startBtn.style.display = "none";
+
+  if (!gameInterval) {
+    gameInterval = setInterval(updateGame, 30);
+  }
 });
