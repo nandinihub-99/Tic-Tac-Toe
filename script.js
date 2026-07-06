@@ -54,3 +54,16 @@ startBtn.addEventListener("click", () => {
     gameInterval = setInterval(updateGame, 30);
   }
 });
+function moveLeft() {
+  if (basketX > 0) {
+    basketX -= 20;
+    basket.style.left = basketX + "px";
+  }
+}
+
+function moveRight() {
+  if (basketX < 220) {
+    basketX += 20;
+    basket.style.left = basketX + "px";
+  }
+}
